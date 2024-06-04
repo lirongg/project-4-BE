@@ -15,6 +15,7 @@ app.use(require('./config/checkToken'))
 
 //Routes
 app.use('/users', require('./routes/userRoutes'));
+app.use('/items', require('./routes/itemRoutes'));
 
 
 //defining port and listen
