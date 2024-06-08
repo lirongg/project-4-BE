@@ -16,6 +16,27 @@ async function createItem(req, res) {
   }
 }
 
+async function getUserItems(req, res) {
+  try{ 
+    console.log(req.params)
+    const getuseritem = await Item.find({_id: req.params.id});
+  return res.status(200).json(getuseritem);
+}catch (error) {
+  console.error(error);
+  return res.status(500).json({error:error.message})
+}
+}
+
+async function getItems(req, res) {
+  try {
+    const getitem = await Item.find({});
+    return res.status(200).json(getitem);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 async function updateItem(req, res) {
     try {
       const { id } = req.params;
@@ -46,4 +67,4 @@ async function updateItem(req, res) {
     }
   }
 
-  module.exports = {createItem, updateItem, deleteItem}
+  module.exports = {createItem, updateItem, deleteItem, getUserItems, getItems}
