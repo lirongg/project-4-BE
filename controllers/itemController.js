@@ -2,6 +2,7 @@
 // Add, delete, find, edit
 
 const Item = require("../models/itemModel.js");
+const mongoose = require('mongoose');
 
 async function createItem(req, res) {
   try {
@@ -18,7 +19,6 @@ async function createItem(req, res) {
 
 async function getUserItems(req, res) {
   try{ 
-    console.log(req.params)
     const getuseritem = await Item.find({_id: req.params.id});
   return res.status(200).json(getuseritem);
 }catch (error) {
@@ -67,4 +67,28 @@ async function updateItem(req, res) {
     }
   }
 
-  module.exports = {createItem, updateItem, deleteItem, getUserItems, getItems}
+  async function searchItems(req, res) {
+    try {
+      const { query } = req.query;
+      console.log(`Search query: ${query}`); // Debugging line to check the search query
+  
+      // Only apply regex to string fields
+      const items = await Item.find({
+        $or: [
+          { item: { $regex: query, $options: 'i' } },
+          { location: { $regex: query, $options: 'i' } },
+          { description: { $regex: query, $options: 'i' } },
+        ],
+      });
+  
+      console.log(`Items found: ${items.length}`); // Debugging line to check the number of items found
+      return res.status(200).json(items);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  
+  
+
+  module.exports = {createItem, updateItem, deleteItem, getUserItems, getItems, searchItems}
