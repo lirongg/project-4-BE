@@ -19,7 +19,7 @@ async function createItem(req, res) {
 
 async function getUserItems(req, res) {
   try{ 
-    const getuseritem = await Item.find({_id: req.params.id});
+    const getuseritem = await Item.find({createdBy: req.params.id});
   return res.status(200).json(getuseritem);
 }catch (error) {
   console.error(error);
