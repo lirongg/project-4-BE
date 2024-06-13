@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('./config/database')
 require('dotenv').config();
+const uploadRoute = require('./controllers/uploadController')
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,6 +17,7 @@ app.use(require('./config/checkToken'))
 //Routes
 app.use('/users', require('./routes/userRoutes'));
 app.use('/items', require('./routes/itemRoutes'));
+app.use('/upload', uploadRoute)
 
 
 //defining port and listen
