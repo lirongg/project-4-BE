@@ -4,35 +4,42 @@
 const Item = require("../models/itemModel.js");
 const mongoose = require('mongoose');
 
-async function createItem(req, res) {
+const createItem = async (req, res) => {
   try {
-    const item = await Item.create({
-      ...req.body,
+    const itemData = {
+      item: req.body.item,
+      location: req.body.location,
+      description: req.body.description,
       createdBy: req.user._id,
-    });
-    return res.status(200).json(item);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: error.message });
-  }
-}
+      images: req.body.imageURL ? [req.body.imageURL] : [] // Save image URL in the images array
+    };
 
-async function getUserItems(req, res) {
-  try{ 
-    const getuseritem = await Item.find({createdBy: req.params.id});
-  return res.status(200).json(getuseritem);
-}catch (error) {
-  console.error(error);
-  return res.status(500).json({error:error.message})
-}
-}
+    const item = await Item.create(itemData);
+    res.status(201).json(item);
+  } catch (error) {
+    console.error('Error creating item:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const getUserItems = async (req, res) => {
+  try {
+    const userItems = await Item.find({ createdBy: req.params.id });
+    res.status(200).json(userItems);
+  } catch (error) {
+    console.error('Error fetching user items:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 async function getItems(req, res) {
   try {
     const getitem = await Item.find({});
     return res.status(200).json(getitem);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching items:', error)
     return res.status(500).json({ error: error.message });
   }
 }

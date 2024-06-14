@@ -16,7 +16,7 @@ const itemSchema = mongoose.Schema(
       type: String,
     },
     images: {
-      type: Array,
+      type: [String],
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
