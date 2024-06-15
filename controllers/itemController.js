@@ -97,6 +97,22 @@ const getUserItems = async (req, res) => {
   }
 };
 
+async function getitemId(req, res) {
+  try {
+    const { id } = req.params; // Assuming the parameter is named 'id'
+    const item = await Item.findById(id);
+
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json(item);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
 module.exports = {
   createItem,
   updateItem,
@@ -104,5 +120,6 @@ module.exports = {
   getItems,
   searchItems,
   getitemlocation,
-  getUserItems
+  getUserItems,
+  getitemId
 };
