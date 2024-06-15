@@ -10,6 +10,7 @@ router.put('/update/:id', itemCtrl.updateItem);
 router.delete('/delete/:id', itemCtrl.deleteItem);
 router.get('/location/:location',itemCtrl.getitemlocation);
 router.get("/:id", itemCtrl.getUserItems);
+router.get("/item/:id", itemCtrl.getitemId);
 
 
 module.exports = router;
