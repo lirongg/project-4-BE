@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('./config/database')
 require('dotenv').config();
 const uploadRoute = require('./controllers/uploadController')
 
@@ -14,9 +13,14 @@ app.use(express.json());
 
 app.use(require('./config/checkToken'))
 
-//Routes
+// Routes
 app.use('/users', require('./routes/userRoutes'));
-app.use('/items', require('./routes/itemRoutes'));
+
+// Protected routes
+const ensureLoggedIn = require('./config/ensureLoggedIn.js');
+const itemRoutes = require('./routes/itemRoutes.js')
+app.use('/items', itemRoutes);
+app.use('/items/create', ensureLoggedIn, itemRoutes);
 app.use('/upload', uploadRoute)
 
 
