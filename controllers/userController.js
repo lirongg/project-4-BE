@@ -25,15 +25,23 @@ async function signIn(req, res) {
   }
 }
 
-const getUserItems = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
-    const userItems = await Item.find({ createdBy: req.params.id });
-    res.status(200).json(userItems);
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.status(200).json({ message: 'User deleted successfully', user: deletedUser });
   } catch (error) {
-    console.error("Error fetching user items:", error);
-    res.status(500).json({ error: error.message });
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the user' });
   }
 };
+
+
 
 function createJWT(user) {
   return jwt.sign({ user }, process.env.SECRET, { expiresIn: "24h" });
@@ -42,5 +50,5 @@ function createJWT(user) {
 module.exports = {
   create,
   signIn,
-  getUserItems,
+  deleteUser
 };
