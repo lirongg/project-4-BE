@@ -96,6 +96,13 @@ async function updateItem(req, res) {
     }
   }
   
-  
+  async function getitemlocation(req,res){
+    try{const location = req.params.location;
+      const items = await Item.find({ location });
+      res.status(200).json(items);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
 
-  module.exports = {createItem, updateItem, deleteItem, getUserItems, getItems, searchItems}
+  module.exports = {createItem, updateItem, deleteItem, getUserItems, getItems, searchItems, getitemlocation}
