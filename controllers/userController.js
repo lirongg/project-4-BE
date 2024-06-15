@@ -1,5 +1,3 @@
-// Controller methods for user authentication and management
-// Sign in, sign out, delete user, edit user
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
@@ -27,14 +25,22 @@ async function signIn(req, res) {
   }
 }
 
+const getUserItems = async (req, res) => {
+  try {
+    const userItems = await Item.find({ createdBy: req.params.id });
+    res.status(200).json(userItems);
+  } catch (error) {
+    console.error("Error fetching user items:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 function createJWT(user) {
-    return jwt.sign(
-        {user},
-        process.env.SECRET,
-        {expiresIn: "24h"}
-    );
+  return jwt.sign({ user }, process.env.SECRET, { expiresIn: "24h" });
 }
 
 module.exports = {
-    create,signIn
-}
+  create,
+  signIn,
+  getUserItems,
+};
