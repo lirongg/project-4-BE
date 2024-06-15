@@ -87,6 +87,16 @@ async function getitemlocation(req, res) {
   }
 }
 
+const getUserItems = async (req, res) => {
+  try {
+    const userItems = await Item.find({ createdBy: req.params.id });
+    res.status(200).json(userItems);
+  } catch (error) {
+    console.error("Error fetching user items:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createItem,
   updateItem,
@@ -94,4 +104,5 @@ module.exports = {
   getItems,
   searchItems,
   getitemlocation,
+  getUserItems
 };
