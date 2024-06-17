@@ -125,6 +125,17 @@ async function updateItemLocation(req, res) {
   }
 };
 
+const getAllLocations = async (req, res) => {
+  try {
+    // Use Mongoose to get distinct values for the 'location' field
+    const locations = await Item.distinct('location');
+    res.status(200).json(locations); // Send the locations as the response
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    res.status(500).json({ error: 'An error occurred while fetching locations' });
+  }
+};
+
 
 
 
@@ -137,5 +148,5 @@ module.exports = {
   searchItems,
   getitemlocation,
   getUserItems,
-  getitemId, updateItemLocation
+  getitemId, updateItemLocation, getAllLocations
 };
