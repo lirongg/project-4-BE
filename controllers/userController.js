@@ -41,6 +41,41 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, currentPassword, newPassword } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update name if provided
+    if (name) {
+      user.name = name;
+    }
+
+    // Update password if both currentPassword and newPassword are provided
+    if (currentPassword && newPassword) {
+      const match = await bcrypt.compare(currentPassword, user.password);
+      if (!match) {
+        return res.status(400).json({ error: 'Current password is incorrect' });
+      }
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'An error occurred while updating the user' });
+  }
+};
+
+
 
 
 function createJWT(user) {
@@ -50,5 +85,6 @@ function createJWT(user) {
 module.exports = {
   create,
   signIn,
-  deleteUser
+  deleteUser,
+  updateUser
 };

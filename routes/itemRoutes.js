@@ -11,6 +11,7 @@ router.delete('/delete/:id', itemCtrl.deleteItem);
 router.get('/location/:location',itemCtrl.getitemlocation);
 router.get("/:id", itemCtrl.getUserItems);
 router.get("/item/:id", itemCtrl.getitemId);
+router.put('/item/relocate', itemCtrl.updateItemLocation);
 
 
 module.exports = router;

@@ -21,7 +21,7 @@ const createItem = async (req, res) => {
 
 async function getItems(req, res) {
   try {
-    const getitem = await Item.find({});
+    const getitem = await Item.find({}).populate('createdBy', 'name email'); // Populate createdBy with name and email
     return res.status(200).json(getitem);
   } catch (error) {
     console.error("Error fetching items:", error);
@@ -113,6 +113,22 @@ async function getitemId(req, res) {
   }
 }
 
+// Update item location
+async function updateItemLocation(req, res) {
+  const { itemId, newLocation } = req.body;
+  try {
+    const updatedItem = await Item.findByIdAndUpdate(itemId, { location: newLocation }, { new: true });
+    return res.status(200).json(updatedItem);
+  } catch (error) {
+    console.error("Error updating item location:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+
 module.exports = {
   createItem,
   updateItem,
@@ -121,5 +137,5 @@ module.exports = {
   searchItems,
   getitemlocation,
   getUserItems,
-  getitemId
+  getitemId, updateItemLocation
 };
