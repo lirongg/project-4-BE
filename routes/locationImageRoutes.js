@@ -1,15 +1,14 @@
-// uploadController.js
-
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const cloudinary = require("../cloudinary/config");
-const fileUpload = require("express-fileupload");
+const cloudinary = require('../cloudinary/config');
+const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
 const LocationImage = require('../models/locationImageModel'); // Import the LocationImage model
 
 router.use(fileUpload());
 
+// Route to upload and save location image
 router.post("/image", async function (req, res) {
   console.log("Request received");
   console.log("Request files:", req.files);
@@ -35,51 +34,35 @@ router.post("/image", async function (req, res) {
     }
 
     try {
+      const location = req.body.location;
       const secureURL = result.secure_url;
-      const imageId = result.public_id;
 
-      // Check if this upload is for a location or an item
-      if (req.body.location) {
-        const location = req.body.location;
+      // Save the image URL to the database
+      let locationImage = await LocationImage.findOne({ location });
 
-        // Save or update the location image
-        let locationImage = await LocationImage.findOne({ location });
-
-        if (locationImage) {
-          // Update existing record
-          locationImage.imageUrl = secureURL;
-          locationImage.imageId = imageId;
-          await locationImage.save();
-        } else {
-          // Create new record
-          locationImage = new LocationImage({
-            location,
-            imageUrl: secureURL,
-            imageId,
-          });
-          await locationImage.save();
-        }
-
-        res.status(200).json({ url: secureURL, location: locationImage });
-      } else if (req.body.itemId) {
-        // Handle item image upload logic if needed
-        // You might want to store the image URL in the item document
-        // For now, just return the uploaded image URL
-        res.status(200).json({ url: secureURL });
+      if (locationImage) {
+        // Update existing record
+        locationImage.imageUrl = secureURL;
+        await locationImage.save();
       } else {
-        // General image upload response
-        res.status(200).json({ url: secureURL });
+        // Create new record
+        locationImage = new LocationImage({
+          location,
+          imageUrl: secureURL,
+        });
+        await locationImage.save();
       }
 
+      res.status(200).json({ url: secureURL, location: locationImage });
     } catch (dbError) {
-      console.error('Error saving image metadata:', dbError);
-      res.status(500).json({ message: "Error saving image metadata", error: dbError });
+      console.error('Error saving location image:', dbError);
+      res.status(500).json({ message: "Error saving location image", error: dbError });
     }
   });
 
   const tempFilePath = path.join(__dirname, 'tmp', imageFile.name);
 
-  imageFile.mv(tempFilePath, function(err) {
+  imageFile.mv(tempFilePath, function (err) {
     if (err) {
       console.error('Error moving file:', err);
       return res.status(500).send(err);
