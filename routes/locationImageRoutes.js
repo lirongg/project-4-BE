@@ -4,7 +4,7 @@ const cloudinary = require('../cloudinary/config');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
-const LocationImage = require('../models/locationImageModel'); // Import the LocationImage model
+const LocationImage = require('../models/locationImageModel'); 
 
 router.use(fileUpload());
 
