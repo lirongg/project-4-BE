@@ -1,51 +1,46 @@
 const express = require("express");
 const router = express.Router();
 const cloudinary = require("../cloudinary/config");
-const fileUpload = require("express-fileupload");
 const fs = require('fs');
 const path = require('path');
 const LocationImage = require('../models/locationImageModel');
+const upload = require("../multer_mw/multer"); 
 
-router.use(fileUpload());
-
-const uploadImageToCloudinary = (imageFile) => {
+// Function to upload image to Cloudinary
+const uploadImageToCloudinary = (filePath) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (err, result) => {
       if (err) return reject(err);
       resolve(result);
     });
 
-    const tempFilePath = path.join(__dirname, 'tmp', imageFile.name);
-
-    imageFile.mv(tempFilePath, (err) => {
-      if (err) return reject(err);
-      fs.createReadStream(tempFilePath)
-        .pipe(uploadStream)
-        .on('end', () => {
-          fs.unlink(tempFilePath, (unlinkErr) => {
-            if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
-          });
-        })
-        .on('error', (streamErr) => reject(streamErr));
-    });
+    fs.createReadStream(filePath)
+      .pipe(uploadStream)
+      .on('end', () => {
+        fs.unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
+        });
+      })
+      .on('error', (streamErr) => reject(streamErr));
   });
 };
 
-router.post("/image", async function (req, res) {
-  if (!req.files || Object.keys(req.files).length === 0) {
+// Route for handling image uploads
+router.post("/image", upload.single('image'), async function (req, res) {
+  if (!req.file) {
     return res.status(400).send("No files were uploaded.");
   }
 
-  const imageFile = req.files.image;
-  if (!imageFile) {
-    return res.status(400).send("Image file is missing.");
-  }
+  const imageFile = req.file;
+  const tempFilePath = path.join(__dirname, '../assets', imageFile.originalname);
 
   try {
-    const result = await uploadImageToCloudinary(imageFile);
+    // Upload the file to Cloudinary
+    const result = await uploadImageToCloudinary(tempFilePath);
     const secureURL = result.secure_url;
     const imageId = result.public_id;
 
+    // Handle location image logic
     if (req.body.location) {
       const location = req.body.location;
       let locationImage = await LocationImage.findOne({ location });
@@ -73,6 +68,7 @@ router.post("/image", async function (req, res) {
   }
 });
 
+// Route for fetching image by location
 router.get('/image/:location', async function (req, res) {
   const { location } = req.params;
   try {
