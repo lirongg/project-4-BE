@@ -51,12 +51,12 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update name if provided
+   
     if (name) {
       user.name = name;
     }
 
-    // Update password if both currentPassword and newPassword are provided
+
     if (currentPassword && newPassword) {
       const match = await bcrypt.compare(currentPassword, user.password);
       if (!match) {
@@ -65,7 +65,7 @@ const updateUser = async (req, res) => {
       user.password = await bcrypt.hash(newPassword, 10);
     }
 
-    // Save the updated user
+  
     await user.save();
 
     res.status(200).json({ message: 'User updated successfully', user });

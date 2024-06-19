@@ -1,11 +1,11 @@
-//schema for item - item name, description, qty, category, expiry date (if applicable)
+
 const mongoose = require("mongoose");
 
 const locationImageSchema = mongoose.Schema(
   {
-    location: { type: String, required: true, unique: true }, // e.g., "Living Room"
-  imageUrl: { type: String, required: true }, // URL to the Cloudinary image
-  imageId: { type: String, required: true }, // ID from Cloudinary for easy deletion if needed
+    location: { type: String, required: true, unique: true }, 
+  imageUrl: { type: String, required: true }, 
+  imageId: { type: String, required: true }, 
   uploadedAt: { type: Date, default: Date.now },
 });
 

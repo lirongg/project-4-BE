@@ -1,4 +1,4 @@
-//schema for item - item name, description, qty, category, expiry date (if applicable)
+
 const mongoose = require("mongoose");
 const User = require("./userModel");
 

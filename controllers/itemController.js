@@ -21,7 +21,7 @@ const createItem = async (req, res) => {
 
 async function getItems(req, res) {
   try {
-    const getitem = await Item.find({}).populate('createdBy', 'name email'); // Populate createdBy with name and email
+    const getitem = await Item.find({}).populate('createdBy', 'name email'); 
     return res.status(200).json(getitem);
   } catch (error) {
     console.error("Error fetching items:", error);
@@ -99,7 +99,7 @@ const getUserItems = async (req, res) => {
 
 async function getitemId(req, res) {
   try {
-    const { id } = req.params; // Assuming the parameter is named 'id'
+    const { id } = req.params; 
     const item = await Item.findById(id);
 
     if (!item) {
@@ -128,7 +128,7 @@ async function updateItemLocation(req, res) {
 const getAllLocations = async (req, res) => {
   try {
     const locations = await Item.distinct('location');
-    res.status(200).json(locations); // Send the locations as the response
+    res.status(200).json(locations); 
   } catch (error) {
     console.error('Error fetching locations:', error);
     res.status(500).json({ error: 'An error occurred while fetching locations' });
